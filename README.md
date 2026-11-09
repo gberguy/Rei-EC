@@ -8,21 +8,11 @@ Rei is a Minecraft 1.12.2 companion mod for the Eternal Confluence modpack. Equi
 - Baubles or a compatible fork.
 - Optional: Thaumcraft 1.12.2-6.1.BETA26 for Runic Shielding integration.
 
-Rei is currently pre-launch; CurseForge is not live. Its first official public release will be All Rights Reserved.
-
-For local testing, place an approved `Rei_EC-0.1.1.jar` build in the instance's `mods` directory. Install the same Rei version on the client and server, with the required Baubles implementation. Use one Baubles implementation at a time. GeckoLib and Cleanroom are not required.
-
 ## Using Rei
 
-Rei is available in the Miscellaneous creative tab, or through an operator command:
+Equip her in a compatible Baubles slot. Rei stacks to one, prevents a second copy from being equipped through normal equipment validation, and remains removable and transferable. The companion is a visual attachment, without a separate entity or hitbox.
 
-```text
-/give @p rei:rei 1
-```
-
-Equip her in a compatible Baubles slot. Rei stacks to one, prevents a second copy from being equipped through normal equipment validation, and remains removable and transferable. The companion is a visual attachment, without a separate entity or hitbox. Its animated model, glow mask, item icon, and small wing particles are included; particles last approximately three seconds at 20 ticks per second.
-
-The feeding bonus belongs to the player, persists through death and world saves, and is clamped to 0-127. Operators with permission level 2 can manage an online player's value:
+The feeding bonus belongs to the player, persists through death and world saves, and is clamped to 0-127.
 
 ```text
 /ecrei <player> get
