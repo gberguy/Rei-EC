@@ -1,0 +1,141 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url = "https://maven.minecraftforge.net/" }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.197'
+    }
+}
+if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+    throw new GradleException('Rei requires a Java 8 JDK. Set JAVA_HOME to a Java 8 JDK.')
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+
+
+version = project.mod_version
+group = "com.gberguy.rei" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "Rei_EC"
+
+sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
+
+minecraft {
+
+    // the mappings can be changed at any time, and must be in the following format.
+    // Use non-default mappings at your own risk. they may not always work.
+    // simply re-run your setup task after changing the mappings to update your workspace.
+    mappings channel: 'snapshot', version: '20171003-1.12'
+
+    runs {
+        all {
+            property 'fml.coreMods.load', 'com.gberguy.rei.core.ReiLoadingPlugin'
+        }
+        client {
+            workingDirectory project.file('run')
+            mods {
+                rei {
+                    source sourceSets.main
+                }
+            }
+        }
+        server {
+            workingDirectory project.file('run')
+            mods {
+                rei {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'dev-libs/mods'
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2859'
+    compile fg.deobf('local:Baubles:1.12-1.5.2')
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:2.28.2'
+
+    // you may put jars on which you depend on in ./libs
+    // or you may define them like so..
+    //compile "some.group:artifact:version:classifier"
+    //compile "some.group:artifact:version"
+
+    // real examples
+    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
+    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+
+    // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
+    //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+
+    // the deobf configurations:  'deobfCompile' and 'deobfProvided' are the same as the normal compile and provided,
+    // except that these dependencies get remapped to your current MCP mappings
+    //deobfCompile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+    //deobfProvided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+
+    // for more info...
+    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
+    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+
+}
+
+processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", "1.12.2"
+    inputs.property "license", project.mod_license
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        // replace version and mcversion
+        expand 'version':project.version, 'mcversion':"1.12.2", 'license':project.mod_license
+    }
+
+    // copy everything else except the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+jar {
+    from('LICENSE') {
+        into 'META-INF'
+    }
+    manifest {
+        attributes 'License': project.mod_license,
+                'FMLCorePlugin': 'com.gberguy.rei.core.ReiLoadingPlugin',
+                'FMLCorePluginContainsFMLMod': 'true'
+    }
+}
+
+jar.finalizedBy('reobfJar')
+
+task importReiModel {
+    doLast {
+        def source = file(project.findProperty('reiModel') ?: 'dev-libs/rei-0.2.bbmodel')
+        def model = new groovy.json.JsonSlurper().parse(source)
+        if (model.meta.model_format != 'free' || !model.animations.any { it.name == 'animation.succubus.idle' }) {
+            throw new GradleException('Expected a free-format Blockbench model with the supported idle animation')
+        }
+        copy {
+            from source
+            into 'src/main/resources/assets/rei/companion'
+            rename { 'rei.bbmodel' }
+        }
+    }
+}
+
+tasks.matching { it.name == 'processResources' }.all { mustRunAfter importReiModel }

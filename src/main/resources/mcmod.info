@@ -1,0 +1,12 @@
+[
+  {
+    "modid": "rei",
+    "name": "Rei",
+    "description": "An animated Baubles companion for Eternal Confluence, with persistent feeding bonuses and optional Thaumcraft Runic Shielding integration. License: ${license}.",
+    "license": "${license}",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "authorList": ["gberguy"],
+    "dependencies": []
+  }
+]

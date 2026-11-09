@@ -1,0 +1,8 @@
+item.rei.rei.name=Rei
+commands.rei.usage=/ecrei <player> <set|add|sub> <amount> or /ecrei <player> get
+commands.rei.value=%s has a saved Rei feeding bonus of %s.
+tooltip.rei.feeding=Feeding Bonus +%s
+tooltip.rei.runic=Runic Shielding +%s
+tooltip.rei.total=Total Rei Shielding +%s
+tooltip.rei.awaiting=Feeding Bonus: awaiting server data
+tooltip.rei.no_thaumcraft=Shielding requires Thaumcraft
